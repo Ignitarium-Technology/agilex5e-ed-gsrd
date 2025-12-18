@@ -1,5 +1,45 @@
 cmake_minimum_required(VERSION 3.5...3.28)
 
+# Download SOF & PFG into build dir
+# ===============================
+
+# URLs (replace with real ones)
+set(SOF_URL "https://releases.rocketboards.org/2025.10/gsrd/agilex5_dk_a5e065bb32aes1_gsrd/ghrd_a5ed065bb32ae6sr0.sof")
+set(PFG_URL "https://releases.rocketboards.org/2024.11/zephyr/agilex5/hps_zephyr/hello_world/qspi_boot/qspi_flash_image_agilex5_boot.pfg")
+
+# Destination inside build directory
+set(BITSTREAM_DIR ${CMAKE_BINARY_DIR})
+file(MAKE_DIRECTORY ${BITSTREAM_DIR})
+
+# Final paths used by build
+set(SOF_PATH ${BITSTREAM_DIR}/ghrd_a5ed065bb32ae6sr0.sof CACHE STRING "SOF File path" FORCE)
+set(PFG_PATH ${BITSTREAM_DIR}/qspi_flash_image_agilex5_boot.pfg CACHE STRING "PFG File path" FORCE)
+
+# Download SOF
+if(NOT EXISTS ${SOF_PATH})
+    message(STATUS "Downloading SOF from ${SOF_URL} using wget")
+    execute_process(
+        COMMAND wget -O ${SOF_PATH} ${SOF_URL}
+        RESULT_VARIABLE res
+    )
+    if(NOT res EQUAL 0)
+        message(FATAL_ERROR "Failed to download SOF")
+    endif()
+endif()
+
+# Download PFG
+if(NOT EXISTS ${PFG_PATH})
+    message(STATUS "Downloading PFG from ${PFG_URL} using wget")
+    execute_process(
+        COMMAND wget -O ${PFG_PATH} ${PFG_URL}
+        RESULT_VARIABLE res
+    )
+    if(NOT res EQUAL 0)
+        message(FATAL_ERROR "Failed to download PFG")
+    endif()
+endif()
+
+
 
 include(FetchContent)
 
